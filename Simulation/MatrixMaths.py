@@ -1,11 +1,7 @@
 
 def buildMatrix(Circuit,mode): 
     
-
     extra_unknowns = ["V"]
-
-
-
 
     if mode == "op": 
           extra_unknowns.append("L")
@@ -27,6 +23,7 @@ def buildMatrix(Circuit,mode):
     for i in range(n): 
          aug_matrix[i].append(matrix_b[i])
 
+    print(aug_matrix)
     return aug_matrix
             
 
@@ -94,5 +91,5 @@ def matrixSolver(matrix):
         current_column -= 1 
         current_row -= 1
 
-  
+    print(matrix)
     return matrix

@@ -9,7 +9,6 @@ from Simulation.SimulationTypes.OperatingPoint import OperatingPoint
 class Interpreter(): 
 
     def __init__(self): 
-        
         self.circuit = Circuit()
         self.simulation_manager = SimulationManager(self.circuit) 
         self.component_names = [] 
@@ -18,7 +17,7 @@ class Interpreter():
     def parseFile(self,filepath): 
         self.current_line = 1
         with open(filepath) as f: 
-            next(f) #spice skips the first line of the file
+            next(f) #spice skips the first line of the file as its the title 
             self.current_line += 1
 
             for line in f: 

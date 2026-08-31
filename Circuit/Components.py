@@ -57,9 +57,7 @@ class Resistor(Component):
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
             self.current = self.voltage/self.num_value
         
-            
-
-   
+  
 class Capacitor(Component): 
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode): 
         if mode == "op": 
@@ -88,10 +86,11 @@ class Inductor(Component):
             self.stamp_cell_a(b,c,-1,matrix_a)
             self.stamp_cell_a(c,a,1,matrix_a)
             self.stamp_cell_a(c,b,-1,matrix_a)
-            matrix_b[c] = self.num_value   
+            matrix_b[c] = 0
         if mode == "tran": 
             pass 
-    
+
+
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
         if mode == "op": 
             index = extra_unknown_map[self.name]
@@ -116,7 +115,6 @@ class VoltageSource(Component):
         self.current = results_matrix[index][-1]
 
 
-
 class CurrentSource(Component): 
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
 
@@ -128,6 +126,3 @@ class CurrentSource(Component):
 
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode):
         self.current = self.num_value
-        
-
-        

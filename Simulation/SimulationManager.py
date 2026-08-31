@@ -4,7 +4,6 @@ class SimulationManager():
         self.directives = [] 
         self.circuit = circuit 
 
-
     def runDirectives(self): 
         for directive in self.directives: 
             self.runDirective(directive)
