@@ -52,6 +52,7 @@ class Interpreter():
             return
 
         elif directive == "tran": 
+            
             return
 
         else: 

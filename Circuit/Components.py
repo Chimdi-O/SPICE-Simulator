@@ -1,5 +1,10 @@
 from SIunit import SI_prefix
 
+
+# Branch voltage is defined as V(node0) - V(node1).
+# Positive branch current is defined from node0 -> node1.
+
+
 class Component(): 
     def __init__(self,name,nodes,str_value,num_value): 
         self.name = name 
@@ -59,23 +64,45 @@ class Resistor(Component):
         
   
 class Capacitor(Component): 
+
+    def __init__(self,name,nodes,str_value,num_value):
+        super.__init__(self,name,nodes,str_value,num_value)
+
+        self.R_eq = Resistor(None,self.nodes,None,None)
+        self.I_eq = CurrentSource(None,self.nodes,None,0)
+
+    def update_companion_models(self,time_step): 
+         self.R_eq.num_value = time_step/self.num_value
+         self.I_eq.num_value = -(self.num_value * self.voltage)/time_step 
+
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode): 
         if mode == "op": 
             pass 
           
-        elif mode == "tran": 
-            pass
+        elif mode == "tran":
+            self.R_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode)  
+            self.I_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode)             
     
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode):
         if mode == "op": 
             self.current = 0 
-       
         
         elif mode == "tran": 
-            pass 
+            self.current = self.voltage/self.R_eq.num_value + self.I_eq.num_value
     
         
 class Inductor(Component): 
+    #at the start of a new time step self.current represents the old current 
+    def __init__(self,name,nodes,str_value,num_value):
+        super.__init__(self,name,nodes,str_value,num_value)
+        self.R_eq = Resistor(None,self.nodes,None,None)
+        self.I_eq = CurrentSource(None,self.nodes,None,0)
+
+    def update_companion_models(self,time_step): 
+            self.R_eq.num_value = self.num_value/time_step
+            self.I_eq.num_value =  self.current
+   
+
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
         if mode == "op": # in OP inductor is a short which means a voltage source with an inductance of zero1``
             a = node_map.get(self.nodes[0])
@@ -87,14 +114,20 @@ class Inductor(Component):
             self.stamp_cell_a(c,a,1,matrix_a)
             self.stamp_cell_a(c,b,-1,matrix_a)
             matrix_b[c] = 0
-        if mode == "tran": 
-            pass 
 
+        if mode == "tran": 
+            self.R_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode)  
+            self.I_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode) 
+            
 
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
         if mode == "op": 
             index = extra_unknown_map[self.name]
             self.current = results_matrix[index][-1]
+
+        elif mode == "tran": 
+            self.current = self.voltage/self.R_eq.num_value + self.I_eq.num_value
+
        
 
 class VoltageSource(Component): 
