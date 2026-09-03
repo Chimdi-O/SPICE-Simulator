@@ -41,8 +41,8 @@ Python hides complexities that C++ does not, which allows me to focus on the arc
 - [x] Output Formatting
 - [x] Current sources
 - [x] Power calculations 
-- [ ] Transient
-- [ ] Waveform plotting
+- [x] Transient
+- [x] Waveform plotting
 - [ ] AC Voltage sources
 - [ ] AC Current source 
 - [ ] Supernode analysis
