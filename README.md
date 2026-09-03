@@ -12,10 +12,8 @@ Input a netlist into the file called **"SpiceTest.txt"** and then run main. The 
 
 ## Status
 
-The only analysis mode is Operating Point, and the only components are capacitors, inductors, resistors, and voltage sources.
-
-There is no input validation, so bad syntax or an unsolvable circuit will cause errors in the program.  
-The ground node should be called **"0"**.
+Currently the program supports Operating point and transient mode.
+The components implemented are capacitors, inductors, resistors, and voltage sources.
 
 ## Why I am building this
 
