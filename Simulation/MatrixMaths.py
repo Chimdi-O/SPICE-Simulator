@@ -7,7 +7,7 @@ def buildMatrix(Circuit,mode):
           extra_unknowns.append("L")
 
     for component in Circuit.components: 
-        if component.name[0] in extra_unknowns: 
+        if component.name[0] in extra_unknowns and component.name not in  Circuit.extra_unknown_map: 
              Circuit.extra_unknown_map[component.name] = len(Circuit.node_map) + len(Circuit.extra_unknown_map) 
 
     n = len(Circuit.node_map)+len(Circuit.extra_unknown_map)
@@ -23,7 +23,7 @@ def buildMatrix(Circuit,mode):
     for i in range(n): 
          aug_matrix[i].append(matrix_b[i])
 
-    print(aug_matrix)
+   
     return aug_matrix
             
 
@@ -91,5 +91,5 @@ def matrixSolver(matrix):
         current_column -= 1 
         current_row -= 1
 
-    print(matrix)
+ 
     return matrix

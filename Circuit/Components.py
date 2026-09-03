@@ -31,15 +31,17 @@ class Component():
     def calcPower(self): 
         self.power = self.voltage*self.current
     
-    def calcVoltage(self,voltage_dict):
+    def calcVoltage(self,voltage_dict,node_map):
             node1_V = 0 
             node2_V = 0 
             
             if self.nodes[0] != "0": 
-                node1_V = voltage_dict[self.nodes[0]] 
+                index = node_map[self.nodes[0]]
+                node1_V = voltage_dict[index] 
             
             if self.nodes[1] != "0": 
-                node2_V = voltage_dict[self.nodes[1]] 
+                index = node_map[self.nodes[1]]
+                node2_V = voltage_dict[index] 
 
             self.voltage = node1_V - node2_V
         
@@ -61,12 +63,13 @@ class Resistor(Component):
     
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
             self.current = self.voltage/self.num_value
+            return self.current
         
   
 class Capacitor(Component): 
 
     def __init__(self,name,nodes,str_value,num_value):
-        super.__init__(self,name,nodes,str_value,num_value)
+        super().__init__(name,nodes,str_value,num_value)
 
         self.R_eq = Resistor(None,self.nodes,None,None)
         self.I_eq = CurrentSource(None,self.nodes,None,0)
@@ -89,12 +92,14 @@ class Capacitor(Component):
         
         elif mode == "tran": 
             self.current = self.voltage/self.R_eq.num_value + self.I_eq.num_value
+
+        return self.current
     
         
 class Inductor(Component): 
     #at the start of a new time step self.current represents the old current 
     def __init__(self,name,nodes,str_value,num_value):
-        super.__init__(self,name,nodes,str_value,num_value)
+        super().__init__(name,nodes,str_value,num_value)
         self.R_eq = Resistor(None,self.nodes,None,None)
         self.I_eq = CurrentSource(None,self.nodes,None,0)
 
@@ -128,6 +133,8 @@ class Inductor(Component):
         elif mode == "tran": 
             self.current = self.voltage/self.R_eq.num_value + self.I_eq.num_value
 
+        return self.current
+
        
 
 class VoltageSource(Component): 
@@ -146,6 +153,7 @@ class VoltageSource(Component):
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
         index = extra_unknown_map[self.name]
         self.current = results_matrix[index][-1]
+        return self.current
 
 
 class CurrentSource(Component): 
@@ -159,3 +167,4 @@ class CurrentSource(Component):
 
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode):
         self.current = self.num_value
+        return self.current

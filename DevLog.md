@@ -13,5 +13,13 @@ The program currently has Resistors, Inductors, Capacitors, Voltage Sources and 
 ### Current state 
 part way through implmenting transient analysis to the program. Currently the transient models for capacitors and inductors have been and I am halfway through creating the transient class 
 
-### Current task 
+### todo
 Coding the run() class for the transient class                             
+
+## 3rd Sep 2026 
+
+### Current state 
+Transient mode now works for capacitors and inductors 
+
+### todo
+Fix the op -> transient error

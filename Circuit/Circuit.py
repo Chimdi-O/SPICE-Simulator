@@ -1,17 +1,21 @@
 from SIunit import SI_prefix
-
+#replace the current_dict with just current (somehow find the mapping)
 
 class Circuit(): 
     def __init__(self):
         self.components = [] 
+        self.component_map = {} 
         self.node_map = {} # node_name -> matrix index 
-        self.extra_unknown_map = {}
-        self.reversed_node_map = {}
-        self.voltage_dict = {} 
+        self.extra_unknown_map = {} # this is for the extra equations for the current in the votlage sources
+        self.reversed_node_map = {} # matrix index -> node_name
+        self.voltages = [] # node -> voltage
+        self.currents = [] # component -> current
    
        
     def addComponent(self,comp): 
         self.components.append(comp) 
+        name = comp.name
+        self.component_map[name] = len(self.components) - 1
 
         for i in comp.nodes: 
             if i != "0" and i not in self.node_map: 
@@ -31,25 +35,30 @@ class Circuit():
         return "\n".join(netlist)   
     
     def parseResultsMatrix(self,results_matrix,mode): 
-        # voltage
+        self.voltages = [None] * len(self.node_map)
+        self.currents = [None] * len(self.component_map)
 
+
+        # Voltage
         for i in range(len(self.node_map)): 
-            node = self.reversed_node_map[i]
             value = round(results_matrix[i][-1],3)
-            self.voltage_dict[node] = value 
+            self.voltages[i] = value 
 
         # Currents 
         for i in self.components: 
-            i.calcVoltage(self.voltage_dict)
-            i.calcCurrent(results_matrix,self.node_map,self.extra_unknown_map,mode)
+            i.calcVoltage(self.voltages,self.node_map)
+            current = i.calcCurrent(results_matrix,self.node_map,self.extra_unknown_map,mode)
+            index = self.component_map[i.name]
+            self.currents[index] = current
+
             i.calcPower() 
 
         
-        
     def printValues(self): 
 
-        for node in self.voltage_dict: 
-            value = SI_prefix(self.voltage_dict[node])
+        for node in self.node_map: 
+            unformatted_value = self.voltages[self.node_map[node]]
+            value = SI_prefix(unformatted_value)
             print(f"{f"V({node})":<10} :       {value}V")
         
         for component in self.components: 

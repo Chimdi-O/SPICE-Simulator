@@ -1,9 +1,12 @@
 SPICEwhtaever
 .op
+.tran 1u 200m
 
 
-V2 1 0 10 
-R1 1 0 10k 
+VS 1 0 10 
+R1 1 2 10k 
+L1 2 0 10u
+C1 2 0 10u 
 
 
 

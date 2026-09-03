@@ -3,8 +3,8 @@ from Circuit.Components import Resistor, Inductor, Capacitor, VoltageSource, Cur
 from Simulation.SimulationManager import SimulationManager
 import sys 
 from Simulation.SimulationTypes.OperatingPoint import OperatingPoint 
-#from Simulation.SimulationTypes.Transient import Transient 
-
+from Simulation.SimulationTypes.Transient import Transient 
+from SIunit import parseUnits
 
 class Interpreter(): 
 
@@ -52,7 +52,10 @@ class Interpreter():
             return
 
         elif directive == "tran": 
-            
+            time_step = parseUnits(arguments[0])
+            stop_time = parseUnits(arguments[1])
+            mode  = Transient(self.circuit,time_step,stop_time)
+            self.simulation_manager.directives.append(mode)
             return
 
         else: 
@@ -67,7 +70,7 @@ class Interpreter():
         # some type of if statement when we have components with different number of nodes 
         nodes = tokens[1:3]
         str_value = tokens[3]
-        num_value = self.parseUnits(str_value)
+        num_value = parseUnits(str_value)
 
         if name  in self.component_names: 
             print(f"Error: Duplicate component name {name} on line {self.current_line}")
@@ -94,33 +97,4 @@ class Interpreter():
             print(f"Error: Unknown component type {name} on line {self.current_line}")
             sys.exit() 
 
-    def parseUnits(self,value): 
-        i = len(value)-1 # a variable to track the start of the suffix 
-
-        while i >= 0 and value[i].isalpha(): 
-            i -= 1
-
-        if  i == -1: 
-            print(f"Error: Invalid value {value} on line {self.current_line}")
-            sys.exit()
-        
-        num = value[:i+1]
-        unit = value[i+1:]    
-
-        unit_table = {
-            "t":1e12, 
-            "g":1e9,
-            "meg":1e6, 
-            "k":1e3, 
-            "":1, 
-            "m":1e-3, 
-            "u":1e-6, 
-            "n":1e-9,
-            "p":1e-12,
-            "f":1e-15}
-        
-        if unit.lower() not in unit_table: 
-            print(f"Error: Invalid unit {unit.lower} on line {self.current_line}")
-            sys.exit()
-
-        return float(num) * unit_table[unit.lower()]
+ 
