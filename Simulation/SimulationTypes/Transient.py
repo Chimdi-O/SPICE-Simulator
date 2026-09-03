@@ -16,6 +16,7 @@ class Transient():
         time = 0 
 
         while time < self.stop_time: 
+            print(time)
             for component in self.circuit.components: 
                 if component.name[0] == "C" or component.name[0] == "L": 
                     component.update_companion_models(self.time_step)
@@ -29,7 +30,7 @@ class Transient():
             if ( time + self.time_step ) > self.stop_time: 
 
                 time = self.stop_time 
-
+                print(time)
                 for component in self.circuit.components: 
                                 if component.name[0] == "C" or component.name[0] == "L": 
                                     component.update_companion_models(self.time_step)
@@ -41,8 +42,8 @@ class Transient():
                 
 
             time += self.time_step
-        print(self.results)
-        self.plot("voltage",'2')
+        
+        self.plot()
        
 
     def store_results(self,time): 
@@ -50,31 +51,64 @@ class Transient():
         self.results["voltage"].append(self.circuit.voltages)
         self.results["current"].append(self.circuit.currents)
 
-    def plot(self,quanitity,target): 
+    def query_plot_variable(self): 
          
+         print("[V]oltage, [C]urrent or [Q]uit")
+         quanitity = input("choose a quantity:    ")
+         print()
 
-         if quanitity == "voltage": 
-              print(quanitity)
-              index = self.circuit.node_map[target]
-              target_voltages = []
+         if quanitity == "Q":  
+              return "Quit"
+        
+         if quanitity == "C": 
+            
+            print(self.circuit.component_map)
+            target = input("Enter a component current to be plotted:   ")
+            print()
 
-              for i in self.results["voltage"]: 
-                   target_voltages.append(i[index])
-              print("to!")
-              plt.plot(self.results["time"], target_voltages)
-              plt.show()
+            if target  in self.circuit.component_map: 
+                 target = self.circuit.component_map[target]
+                 return ["current",target]
+                 
+            else: 
+                 print("Invalid component\n")
+                 return None 
+                 
+                 
+         if quanitity == "V": 
 
-         
-         if quanitity == "current": 
-              index = self.circuit.component_map[target]
-              target_currents = [] 
+            print(self.circuit.node_map)
+            target = input("Enter a node voltage to be plotted:   ")
+            print()
 
-              for i in self.results["current"]: 
-                    target_currents.append(i[index])
+            if target in self.circuit.node_map: 
+                 target = self.circuit.node_map[target]
+                 return ["voltage",target]
 
-              plt.plot(self.results["time"], target_currents)
-              plt.show()
+            else:
+                print("Invalid node\n")
+                return None
 
+         else: 
+              print("Invalid quantity\n")
+              return None 
+                    
+
+    def plot(self): 
+
+        plot_variable = self.query_plot_variable()
+        while plot_variable != "Quit":
+            if plot_variable and plot_variable != "Quit": 
+                plot_values = [] 
+                for i in self.results[plot_variable[0]]: 
+                    plot_values.append(i[plot_variable[1]])
+                
+
+            
+            
+                plt.plot(self.results["time"], plot_values)
+                plt.show()
+            plot_variable = self.query_plot_variable()
 
         
          

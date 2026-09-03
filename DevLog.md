@@ -23,3 +23,15 @@ Transient mode now works for capacitors and inductors
 
 ### todo
 Fix the op -> transient error
+
+## 3rd Sep 2026 (later in the day)
+
+### Current state 
+
+The op -> transient error has been fixed (it was just a typo in the netlist). 
+There was a problem with the ringing of a RLC circuit where the plot was far too flat and almost like a square wave which turned out to be because I was rounding the voltage values in parseresultsMatrix() function instead of the printvalues() function in the circuit class. 
+Now all the features implemented fully function
+
+### todo 
+
+add AC current and voltage sources (should be easy)

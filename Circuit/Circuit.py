@@ -41,7 +41,7 @@ class Circuit():
 
         # Voltage
         for i in range(len(self.node_map)): 
-            value = round(results_matrix[i][-1],3)
+            value = results_matrix[i][-1]
             self.voltages[i] = value 
 
         # Currents 
@@ -58,8 +58,8 @@ class Circuit():
 
         for node in self.node_map: 
             unformatted_value = self.voltages[self.node_map[node]]
-            value = SI_prefix(unformatted_value)
-            print(f"{f"V({node})":<10} :       {value}V")
+            voltage =round( SI_prefix(unformatted_value),3)
+            print(f"{f"V({node})":<10} :       {voltage}V")
         
         for component in self.components: 
             current = SI_prefix(component.current)
