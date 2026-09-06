@@ -1,4 +1,4 @@
-#Development Log 
+# Development Log 
 
 This is a record of the progress, issues and decisions made during the development of this project 
 
@@ -35,3 +35,5 @@ Now all the features implemented fully function
 ### todo 
 
 add AC current and voltage sources (should be easy)
+
+## 
