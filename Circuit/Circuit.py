@@ -10,6 +10,8 @@ class Circuit():
         self.reversed_node_map = {} # matrix index -> node_name
         self.voltages = [] # node -> voltage
         self.currents = [] # component -> current
+       
+        
    
        
     def addComponent(self,comp): 

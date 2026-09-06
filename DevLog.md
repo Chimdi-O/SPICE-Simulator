@@ -36,4 +36,18 @@ Now all the features implemented fully function
 
 add AC current and voltage sources (should be easy)
 
-## 
+## 4th Sep 2026 
+
+### Current state 
+
+- added an AC member variable to the component class so the program is able to tell if the component requires updating at the start of every time step 
+- Changed the update_companion_model to a generic update class in the caps and inductors so all AC components will have a function of the same name to call 
+- Broke down the run() function in the transient class to now use a run_time_step() function for greater modularity 
+- Part way through changing the parseline function so it no longer breaks apart lines via white spaces and instead goes character by character to find tokens in order to support the parsing of functions like sin(1 1k 0)
+- rewrote the interpreter function to work more generally 
+- Created a waveform class for sine waves 
+- Added sine voltage and current sources 
+
+### todo 
+- fix the issue when running operating point the transient (e.g in a single file having .op then .tran causes a crash)
+- get to work on diodes 

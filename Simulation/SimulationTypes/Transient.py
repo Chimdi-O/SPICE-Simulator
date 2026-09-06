@@ -9,40 +9,34 @@ class Transient():
         self.results_matrix = [] 
         self.time_step = time_step
         self.stop_time = stop_time 
+        self.time = 0 
         self.results = { "time":[], "voltage":[], "current":[]}
+
+    def run_time_step(self,time_step):
+
+        print(self.time)
+    
+        for component in self.circuit.components: 
+            if component.ac:  
+                component.update(self.time_step,self.time)
+
+        matrix = buildMatrix(self.circuit,"tran")
+        self.results_matrix = matrixSolver(matrix)
+        self.circuit.parseResultsMatrix(self.results_matrix,"tran")
+        self.store_results(self.time) 
+        self.time += time_step
+         
 
     def run(self): 
 
-        time = 0 
 
-        while time < self.stop_time: 
-            print(time)
-            for component in self.circuit.components: 
-                if component.name[0] == "C" or component.name[0] == "L": 
-                    component.update_companion_models(self.time_step)
+        while self.time < self.stop_time: 
+            self.run_time_step(self.time_step)
 
-            matrix = buildMatrix(self.circuit,"tran")
-            self.results_matrix = matrixSolver(matrix)
-            self.circuit.parseResultsMatrix(self.results_matrix,"tran")
-           
-            self.store_results(time)
+            if ( self.time + self.time_step ) > self.stop_time: 
+                time_step = self.stop_time - self.time 
+                self.run_time_step(time_step)
 
-            if ( time + self.time_step ) > self.stop_time: 
-
-                time = self.stop_time 
-                print(time)
-                for component in self.circuit.components: 
-                                if component.name[0] == "C" or component.name[0] == "L": 
-                                    component.update_companion_models(self.time_step)
-                
-                matrix = buildMatrix(self.circuit,"tran")
-                self.results_matrix = matrixSolver(matrix)
-                self.circuit.parseResultsMatrix(self.results_matrix,"tran")
-                self.store_results(time)
-                
-
-            time += self.time_step
-        
         self.plot()
        
 

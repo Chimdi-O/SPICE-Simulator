@@ -1,14 +1,14 @@
 
 
 *.op
-.tran 1u 20m
+.tran 1u 200m
 
 
 
-VS 1 0 10 
-R1 1 2 10k 
-L1 2 0 10m
-C1 2 0 10u 
+IL 1 0 sine(10m 10m 1k)
+*R1 1 0 10k 
+*L1 2 0 10m
+C1 1 0 159n
 
 
 
