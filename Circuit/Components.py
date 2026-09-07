@@ -146,8 +146,16 @@ class VoltageSource(Component):
         if self.waveform: 
             self.ac = 1 
 
+    def __repr__(self):
+        if self.ac == 1: 
+            node_string = " ".join(self.nodes)
+            return f"{self.name} {node_string} {self.waveform.name}({SI_prefix(self.value)} {SI_prefix(self.waveform.amplitude)} {SI_prefix(self.waveform.frequency)})"
+
+        else:
+            return super().__repr__()
+
     def update(self,time_step,time): 
-        self.value = self.waveform.value(time)
+        self.value = self.waveform.value(time) + self.value
       
 
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
@@ -174,13 +182,16 @@ class CurrentSource(Component):
         self.waveform = waveform 
         if self.waveform: 
             self.ac = 1 
+    def __repr__(self):
+        if self.ac == 1: 
+            node_string = " ".join(self.nodes)
+            return f"{self.name} {node_string} {self.waveform.name}({SI_prefix(self.value)} {SI_prefix(self.waveform.amplitude)} {SI_prefix(self.waveform.frequency)})"
+        else: 
+            return super().__repr__() 
 
     def update(self,time_step,time): 
-        self.value = self.waveform.value(time) 
-        if self.waveform: 
-            self.ac = 1 
-            
-
+        self.value = self.waveform.value(time) + self.value
+       
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
 
         a = node_map.get(self.nodes[0])

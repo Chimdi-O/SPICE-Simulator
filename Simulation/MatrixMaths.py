@@ -1,6 +1,8 @@
 
-def buildMatrix(Circuit,mode): 
-    
+def buildMatrix(Circuit,mode):  
+
+    Circuit.extra_unknown_map = {} 
+
     extra_unknowns = ["V"]
 
     if mode == "op": 
@@ -10,6 +12,8 @@ def buildMatrix(Circuit,mode):
         if component.name[0] in extra_unknowns and component.name not in  Circuit.extra_unknown_map: 
              Circuit.extra_unknown_map[component.name] = len(Circuit.node_map) + len(Circuit.extra_unknown_map) 
 
+    
+    
     n = len(Circuit.node_map)+len(Circuit.extra_unknown_map)
     matrix_a = [[0 for _ in range(n)] for _ in range(n)]
     matrix_b = [0 for _ in range(n)]
@@ -32,6 +36,8 @@ def buildMatrix(Circuit,mode):
 #NOTE if there is a row of zeros that is a singular matrix and it cannot be solved!!!!
 
 def matrixSolver(matrix):
+
+
 
     #these two identify the index of the pivot 
     current_column = 0

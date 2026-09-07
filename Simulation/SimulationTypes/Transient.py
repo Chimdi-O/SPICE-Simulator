@@ -13,8 +13,10 @@ class Transient():
         self.results = { "time":[], "voltage":[], "current":[]}
 
     def run_time_step(self,time_step):
-
-        print(self.time)
+        if self.time == 0: 
+            print("0%")
+        else: 
+            print( round(100*(self.time/self.stop_time),3),"%")
     
         for component in self.circuit.components: 
             if component.ac:  
@@ -91,15 +93,15 @@ class Transient():
     def plot(self): 
 
         plot_variable = self.query_plot_variable()
+
         while plot_variable != "Quit":
+
             if plot_variable and plot_variable != "Quit": 
                 plot_values = [] 
+
                 for i in self.results[plot_variable[0]]: 
                     plot_values.append(i[plot_variable[1]])
-                
 
-            
-            
                 plt.plot(self.results["time"], plot_values)
                 plt.show()
             plot_variable = self.query_plot_variable()

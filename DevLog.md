@@ -51,3 +51,13 @@ add AC current and voltage sources (should be easy)
 ### todo 
 - fix the issue when running operating point the transient (e.g in a single file having .op then .tran causes a crash)
 - get to work on diodes 
+
+## 5th Sep 2026 
+
+### Current state 
+- Fixed the issue where running .op than .tran cause a crash (The reason was that the I did not refresh the extra node map after each analysis)
+- changed the user output for each timestep to be the percent of completion rather than the current time 
+- implemented parsing decimal numbers by adding parsing decimal numbers 
+
+### todo 
+- work on diodes 

@@ -31,14 +31,30 @@ class Interpreter():
         extra_characters = ["*",".","(",")"]
         
         while i < len(line): 
-
             if line[i] in extra_characters: 
                 tokens.append(line[i])
                 i += 1 
 
-            elif line[i].isalnum(): 
+            elif line[i].isdigit(): 
                 start = i 
-    
+
+                while line[i].isdigit(): 
+                    i += 1
+
+                if line[i] == ".": 
+                    i += 1 
+
+                    while line[i].isdigit(): 
+                        i += 1
+
+                while line[i].isalpha(): 
+                    i += 1 
+
+                tokens.append(line[start:i])
+
+            elif line[i].isalpha(): 
+                start = i 
+
                 while line[i].isalnum(): 
                     i += 1
 
@@ -54,13 +70,13 @@ class Interpreter():
                 print(f"unknown charcter {line[i]} on line {self.current_line}") 
                 sys.exit() 
 
+        print(tokens) 
         return tokens 
 
     def parseLine(self,line): 
 
         tokens = self.tokenize(line)
      
-
         if not tokens or tokens[0] == "*": 
             return 
         
@@ -71,7 +87,6 @@ class Interpreter():
         
         else: 
             component = self.parseComponent(tokens)
-            print(component)
             self.circuit.addComponent(component)
 
 
@@ -96,6 +111,7 @@ class Interpreter():
             sys.exit() 
 
     def parseWaveform(self,tokens): 
+
         name = tokens.pop(0)
 
         if tokens.pop(0) != "(": 
@@ -112,17 +128,17 @@ class Interpreter():
             parsed_tokens = [] 
             for i in tokens: 
                 parsed_tokens.append(parseUnits(i))
-            Waveform = Sinewave(parsed_tokens[0],parsed_tokens[1],parsed_tokens[2])
+            dc_offset = parsed_tokens.pop(0)
+            Waveform = Sinewave(parsed_tokens[0],parsed_tokens[1])
 
         else: 
             print(f"Error: Unrecognised waveform '{name}' on line {self.current_line}")
             sys.exit() 
         
-        return  Waveform
+        return  [dc_offset,Waveform]
 
 
     def parseComponent(self,tokens): 
-        print(tokens)
         
         name = tokens[0].upper() 
         # some type of if statement when we have components with different number of nodes 
@@ -131,8 +147,10 @@ class Interpreter():
         waveform = 0 
 
         if tokens[0] == "sine": 
-            value = 0
-            waveform = self.parseWaveform(tokens)
+            
+            output = self.parseWaveform(tokens)
+            value = output[0]
+            waveform = output[1]
         
  
         elif len(tokens) == 1: 

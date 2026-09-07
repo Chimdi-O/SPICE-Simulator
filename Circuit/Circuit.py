@@ -60,7 +60,7 @@ class Circuit():
 
         for node in self.node_map: 
             unformatted_value = self.voltages[self.node_map[node]]
-            voltage =round( SI_prefix(unformatted_value),3)
+            voltage = SI_prefix(unformatted_value)
             print(f"{f"V({node})":<10} :       {voltage}V")
         
         for component in self.components: 
