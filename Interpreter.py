@@ -1,5 +1,5 @@
 from Circuit.Circuit import Circuit
-from Circuit.Components import Resistor, Inductor, Capacitor, VoltageSource, CurrentSource
+from Circuit.Components import Resistor, Inductor, Capacitor, VoltageSource, CurrentSource, Diode
 from Simulation.SimulationManager import SimulationManager
 import sys 
 from Simulation.SimulationTypes.OperatingPoint import OperatingPoint 
@@ -70,7 +70,6 @@ class Interpreter():
                 print(f"unknown charcter {line[i]} on line {self.current_line}") 
                 sys.exit() 
 
-        print(tokens) 
         return tokens 
 
     def parseLine(self,line): 
@@ -88,6 +87,7 @@ class Interpreter():
         else: 
             component = self.parseComponent(tokens)
             self.circuit.addComponent(component)
+        
 
 
     def parseDirectives(self,tokens): 
@@ -122,8 +122,6 @@ class Interpreter():
             print(f"Error: Expected a closing bracket ')' on {self.current_line}")
             sys.exit() 
 
-        
-
         if name == "sine": 
             parsed_tokens = [] 
             for i in tokens: 
@@ -146,13 +144,16 @@ class Interpreter():
         tokens = tokens[3:]
         waveform = 0 
 
+        if name.startswith("D"): 
+            return Diode(name,nodes)
+
+
         if tokens[0] == "sine": 
             
             output = self.parseWaveform(tokens)
             value = output[0]
             waveform = output[1]
         
- 
         elif len(tokens) == 1: 
             value = parseUnits(tokens[0])
 
@@ -176,9 +177,11 @@ class Interpreter():
         
         elif name.startswith("V"): 
             return VoltageSource(name,nodes,value,waveform)
+
         
         elif name.startswith("I"): 
             return CurrentSource(name,nodes,value,waveform)
+
         
         else: 
             print(f"Error: Unknown component type {name} on line {self.current_line}")

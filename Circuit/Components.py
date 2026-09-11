@@ -1,5 +1,5 @@
 from SIunit import SI_prefix
-
+import math
 
 # Branch voltage is defined as V(node0) - V(node1).
 # Positive branch current is defined from node0 -> node1.
@@ -145,6 +145,7 @@ class VoltageSource(Component):
         self.waveform = waveform 
         if self.waveform: 
             self.ac = 1 
+            self.dc_offset = value 
 
     def __repr__(self):
         if self.ac == 1: 
@@ -155,7 +156,8 @@ class VoltageSource(Component):
             return super().__repr__()
 
     def update(self,time_step,time): 
-        self.value = self.waveform.value(time) + self.value
+        self.value = self.waveform.value(time) + self.dc_offset
+        
       
 
     def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
@@ -169,6 +171,7 @@ class VoltageSource(Component):
         self.stamp_cell_a(c,a,1,matrix_a)
         self.stamp_cell_a(c,b,-1,matrix_a)
         matrix_b[c] = self.value
+
 
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode): 
         index = extra_unknown_map[self.name]
@@ -203,3 +206,47 @@ class CurrentSource(Component):
     def calcCurrent(self,results_matrix,node_map,extra_unknown_map,mode):
         self.current = self.value
         return self.current
+
+class Diode(Component): 
+    def __init__(self, name, nodes, value=None, Is=1e-14, n=1, T=300):
+        super().__init__(name, nodes, value)
+        self.Is = Is # saturation current 
+        self.n = n  # ideality factor
+        self.t = T # tempurature
+        self.R_eq = Resistor(None,self.nodes,None)
+        self.I_eq = CurrentSource(None,self.nodes,0)
+        self.k = 1.380649e-23 #Boltzmann constant J/K
+        self.q = 1.602176634e-19 #Electron charge C 
+        self.voltage = 0.6
+        self.calcCurrent()
+
+    def __repr__(self):
+        node_string = " ".join(self.nodes)
+        return f"{self.name} {node_string}"
+
+    def update(self):
+        Vt = self.k*self.t/self.q
+
+        if self.current == 0: 
+            self.R_eq.value = 1e15 
+        else: 
+            self.R_eq.value = self.n*Vt/self.current
+
+        self.I_eq.value = self.current - self.voltage/self.R_eq.value
+
+
+    def stamp(self,matrix_a,matrix_b,node_map,extra_unknown_map,mode):
+        self.R_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode)  
+        self.I_eq.stamp(matrix_a,matrix_b,node_map,extra_unknown_map,mode) 
+
+    def calcCurrent(self,results_matrix=None,node_map=None,extra_unknown_map=None,mode=None): 
+            Vt = self.k * self.t / self.q
+            exp_arg = self.voltage / (self.n * Vt)
+            #exp_arg = min(exp_arg, 500)
+
+            self.current = self.Is * (math.exp(exp_arg) - 1)
+            print(f"voltage: {self.voltage}")
+            print(f"current: {self.current}")
+            return self.current
+
+

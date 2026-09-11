@@ -1,4 +1,5 @@
 from SIunit import SI_prefix
+from Circuit.Components import Diode 
 #replace the current_dict with just current (somehow find the mapping)
 
 class Circuit(): 
@@ -11,7 +12,12 @@ class Circuit():
         self.voltages = [] # node -> voltage
         self.currents = [] # component -> current
        
-        
+    def hasDiodes(self): 
+        for component in self.components: 
+            if isinstance(component,Diode): 
+                return True 
+
+        return False 
    
        
     def addComponent(self,comp): 
@@ -36,10 +42,10 @@ class Circuit():
         
         return "\n".join(netlist)   
     
-    def parseResultsMatrix(self,results_matrix,mode): 
+    def parseResultsMatrix(self,results_matrix,mode):
+
         self.voltages = [None] * len(self.node_map)
         self.currents = [None] * len(self.component_map)
-
 
         # Voltage
         for i in range(len(self.node_map)): 

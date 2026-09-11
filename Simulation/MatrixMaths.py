@@ -27,7 +27,7 @@ def buildMatrix(Circuit,mode):
     for i in range(n): 
          aug_matrix[i].append(matrix_b[i])
 
-   
+    
     return aug_matrix
             
 

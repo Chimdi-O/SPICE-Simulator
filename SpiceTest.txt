@@ -1,18 +1,18 @@
 
 
-*.op
-.tran 10u 2000m
+.op
+.tran 10u 20m
 
 
 
-VL 1 0 sine(10 1 1k)
+VL 1 0 sine(0 10 1k)
 *VL 1 0 10
 
-R1 1 2 1k
-L1 2 3 10m
-C1 2 3 159u
-L2 3 0 10m
-C2 3 0 159u
+
+D1 1 2
+R1 2 0 1k
+C1 2 0 100u
+  
 
 
 

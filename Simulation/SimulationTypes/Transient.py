@@ -1,6 +1,8 @@
 from Simulation.MatrixMaths import buildMatrix, matrixSolver
 from SIunit import SI_prefix
 import matplotlib.pyplot as plt
+import sys 
+from Circuit.Components import Diode
 
 
 class Transient(): 
@@ -22,16 +24,66 @@ class Transient():
             if component.ac:  
                 component.update(self.time_step,self.time)
 
+
+
+
+        if self.circuit.hasDiodes(): 
+            self.newtonRaphson() 
+
+        else: 
+            self.solve() 
+
+        self.store_results(self.time) 
+        self.time += time_step
+
+    def solve(self): 
         matrix = buildMatrix(self.circuit,"tran")
         self.results_matrix = matrixSolver(matrix)
         self.circuit.parseResultsMatrix(self.results_matrix,"tran")
-        self.store_results(self.time) 
-        self.time += time_step
+
+
+
+    def newtonRaphson(self): 
+        converged = False 
+
+        old_voltages = [0.0] * len(self.circuit.node_map)
+        iteration = 1 
+
+        while converged == False:
+            if iteration == 50: 
+                print("Error: Newton Raphson did not converge")
+                sys.exit() 
+
+            for component in self.circuit.components: 
+                if isinstance(component,Diode): 
+                    component.update()
+            self.solve() 
+            new_voltages = self.circuit.voltages.copy()
+
+            converged = self.checkConvergence(old_voltages,new_voltages)
+
+            old_voltages = new_voltages.copy() 
+
+            iteration += 1 
+
+
+
+    def checkConvergence(self,old_voltages,new_voltages): 
+        max_change = 0
+
+        for i in range(len(old_voltages)):
+            change =  abs(old_voltages[i] - new_voltages[i])
+
+            if change > max_change: 
+                max_change = change 
+
+        if max_change < 1e-4: 
+            return True 
+        else: 
+            return False 
          
 
     def run(self): 
-
-
         while self.time < self.stop_time: 
             self.run_time_step(self.time_step)
 
@@ -58,7 +110,7 @@ class Transient():
         
          if quanitity == "C": 
             
-            print(self.circuit.component_map)
+            print(", ".join(str(k) for k in self.circuit.component_map))
             target = input("Enter a component current to be plotted:   ")
             print()
 
@@ -73,7 +125,8 @@ class Transient():
                  
          if quanitity == "V": 
 
-            print(self.circuit.node_map)
+            print(", ".join(str(k) for k in self.circuit.node_map))
+          
             target = input("Enter a node voltage to be plotted:   ")
             print()
 
