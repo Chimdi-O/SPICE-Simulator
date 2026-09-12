@@ -67,7 +67,8 @@ class Circuit():
         for node in self.node_map: 
             unformatted_value = self.voltages[self.node_map[node]]
             voltage = SI_prefix(unformatted_value)
-            print(f"{f"V({node})":<10} :       {voltage}V")
+            label = f"V({node})"
+            print(f"{label:<10} :       {voltage}V")
         
         for component in self.components: 
             current = SI_prefix(component.current)

@@ -50,7 +50,7 @@ class Transient():
         iteration = 1 
 
         while converged == False:
-            if iteration == 50: 
+            if iteration == 500: 
                 print("Error: Newton Raphson did not converge")
                 sys.exit() 
 

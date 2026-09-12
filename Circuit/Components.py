@@ -245,8 +245,6 @@ class Diode(Component):
             #exp_arg = min(exp_arg, 500)
 
             self.current = self.Is * (math.exp(exp_arg) - 1)
-            print(f"voltage: {self.voltage}")
-            print(f"current: {self.current}")
             return self.current
 
 
