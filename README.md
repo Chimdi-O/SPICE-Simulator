@@ -45,6 +45,9 @@ Python hides complexities that C++ does not, which allows me to focus on the arc
 - [x] Waveform plotting
 - [x] AC Voltage sources
 - [x] AC Current source 
-- [ ] Diodes
-- [ ] Transistors
+- [x] Diodes
+- [ ] Translate to C++
 - [ ] Supernode analysis
+- [ ] Basic waveform viewing GUI
+- [ ] Transistors
+
